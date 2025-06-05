@@ -2,6 +2,7 @@
 ui <- fluidPage(
   tags$head(
     tags$link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
+    tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
     tags$style(HTML("
       body, html { background: #f7f9fa; margin: 0; padding: 0; font-family: 'Roboto', Arial, sans-serif; font-weight: bold !important; }
       .app-header {
@@ -48,7 +49,7 @@ ui <- fluidPage(
         display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; padding: 10px;
       }
       .map-card {
-        flex: 1 1 340px; min-width: 340px; max-width: 370px;
+        flex: 1 1 320px; min-width: 280px; max-width: 420px;
         background: #fff; border-radius: 14px; box-shadow: 0 3px 15px rgba(0,0,0,0.09);
         margin-bottom: 16px;
         overflow: hidden; position: relative; display: flex; flex-direction: column;
@@ -79,6 +80,9 @@ ui <- fluidPage(
       .area-table td span { font-size: 1.21em !important; font-weight: 900 !important; }
       .lulc-legend-icon { font-size: 1.2em !important; }
       *, .app-header, .app-subtitle, .map-card-title, .lulc-legend-item, .area-table, .area-table th, .area-table td, .area-class-icon, .lulc-legend-sticky { font-weight: 900 !important; }
+      @media (max-width: 600px) {
+        .map-card { flex: 1 1 100%; min-width: 100%; max-width: 100%; }
+      }
     "))
   ),
   tags$div(class = "app-header", "Land Use / Land Cover Dashboard"),

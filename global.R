@@ -1,6 +1,7 @@
 library(shiny)
 library(leaflet)
 library(leaflet.minicharts)
+library(leaflet.extras)
 library(plotly)
 
 area_df <- read.table(header=TRUE, text="
