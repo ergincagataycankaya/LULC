@@ -4,6 +4,13 @@ This Shiny web application provides an interactive visualization of multi-year L
 
 ---
 
+## 🌐 Live Demo
+
+You can view the deployed application here:  
+🔗 [https://ergin.shinyapps.io/LULC/](https://ergin.shinyapps.io/LULC/)
+
+---
+
 ## 📊 Features
 
 - 📍 **Interactive LULC Maps** (2019–2023) using Leaflet
