@@ -4,10 +4,13 @@ server <- function(input, output, session) {
   # Helper: Render each LULC map, synced
   makeLULCMapSimple <- function(tiler_url) {
     leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
+      addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
       addTiles(
         urlTemplate = tiler_url,
-        options     = tileOptions(opacity = 0.85)
+        options     = tileOptions(opacity = 0.75),
+        group       = "LULC"
       ) %>%
+      addResetMapButton() %>%
       setView(lng = 29.0, lat = 41.1, zoom = 12) %>%
       syncWith("maps")
   }
