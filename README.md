@@ -1,1 +1,33 @@
-# LULC
+# 🗺️ Land Use / Land Cover (LULC) Monitoring Dashboard
+
+This Shiny web application provides an interactive visualization of multi-year Land Use / Land Cover (LULC) changes in the Istanbul Regional Directorate of Forests from 2019 to 2023. It integrates spatial mapping with statistical graphics for better understanding of land cover dynamics.
+
+---
+
+## 📊 Features
+
+- 📍 **Interactive LULC Maps** (2019–2023) using Leaflet
+- 🧾 **Area Statistics Tables** with color-coded icons for each LULC class
+- 📈 **Pie Charts** visualizing class composition by year
+- 🌲 **Trend Line** showing forest area changes over time
+- 🖼️ Clean and modern UI with responsive layout and custom CSS
+- 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
+
+---
+
+## 🗂️ Folder Structure
+
+```bash
+LULC_Shiny_Dashboard/
+│
+├── ui.R              # User interface layout
+├── server.R          # Server-side logic
+├── global.R          # Shared data, helper functions, and variables
+│
+├── www/              # Static files
+│   └── custom.css    # Custom CSS styling
+│
+├── data/
+│   └── area_data.csv # Land cover area dataset (2019–2023)
+│
+└── README.md         # Project documentation (this file)
