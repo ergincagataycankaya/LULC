@@ -1,9 +1,3 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/README.md b/README.md
-index 952cf09588253e04f8d602254fc8082a2339fbf2..daa63a20b3b850813d45672cabc0166968c35f82 100644
---- a/README.md
-+++ b/README.md
-@@ -1,40 +1,42 @@
  # 🗺️ Land Use / Land Cover (LULC) Monitoring Dashboard
  
  This Shiny web application provides an interactive visualization of multi-year Land Use / Land Cover (LULC) changes in the Istanbul Regional Directorate of Forests from 2019 to 2023. It integrates spatial mapping with statistical graphics for better understanding of land cover dynamics.
@@ -46,6 +40,3 @@ index 952cf09588253e04f8d602254fc8082a2339fbf2..daa63a20b3b850813d45672cabc01669
  │   └── area_data.csv # Land cover area dataset (2019–2023)
  │
  └── README.md         # Project documentation (this file)
- 
-EOF
-)
