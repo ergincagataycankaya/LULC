@@ -19,8 +19,8 @@
  - 🌲 **Trend Line** showing forest area changes over time
  - 🖼️ Clean and modern UI with responsive layout and custom CSS
  - 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
-+- 🛰️ Satellite imagery base maps with LULC overlay
-+- ↩️ Reset zoom button on each map
+- 🛰️ Satellite imagery base maps with LULC overlay
+- ↩️ Reset zoom button on each map
  
  ---
  
