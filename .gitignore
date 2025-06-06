@@ -1,4 +1,21 @@
-.Rproj.user
+# R project defaults
+.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
+.Rapp.history
+
+# RStudio files
+*.Rproj
+
+# renv cache
+renv/library/
+renv/staging/
+
+# rsconnect deployment info
+rsconnect/
+
+# logs and temporary files
+*.log
+*.tmp
+

@@ -7,6 +7,8 @@
  ## 🌐 Live Demo!
  
 [![ShinyApps.io](https://img.shields.io/badge/ShinyApp-LULC-blue?logo=R&logoColor=white)](https://ergin.shinyapps.io/LULC/)
+<br/>
+Uygulamayı hemen denemek için rozete tıklayın.
 
  ---
  
@@ -57,5 +59,16 @@ shiny::runApp()
 ```
 
 The app uses a JavaScript swipe control so no extra R packages are needed.
+
+## 🚀 Otomatik Dağıtım
+
+`main` dalına yapılan her push sonrası uygulama, GitHub Actions ile otomatik
+olarak [shinyapps.io](https://www.shinyapps.io/) üzerinde güncellenir. Bunun için
+`.github/workflows/deploy-shinyapps.yml` dosyasını inceleyebilirsiniz.
+
+## 🤝 Katkı
+
+Katkıda bulunmak isterseniz lütfen [CONTRIBUTING.md](CONTRIBUTING.md)
+dosyasındaki kurallara göz atın.
 
 
