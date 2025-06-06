@@ -4,7 +4,7 @@
  
  ---
  
- ## 🌐 Live Demo
+ ## 🌐 Live Demo!
  
  You can view the deployed application here:  
  🔗 [https://ergin.shinyapps.io/LULC/](https://ergin.shinyapps.io/LULC/)
