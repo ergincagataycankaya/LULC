@@ -59,3 +59,6 @@ Both packages provide the slider functionality used in this app.
  │   └── area_data.csv # Land cover area dataset (2019–2023)
  │
  └── README.md         # Project documentation (this file)
+
+
+<!-- Trigger deployment -->
