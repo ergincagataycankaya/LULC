@@ -2,6 +2,7 @@ library(shiny)
 library(leaflet)
 library(leaflet.minicharts)
 library(leaflet.extras)
+library(leaflet.extras2)
 library(plotly)
 
 area_df <- read.table(header=TRUE, text="
@@ -57,9 +58,26 @@ area_df$year <- as.character(area_df$year)
 
 # LULC class color palette & icons (add/edit if needed)
 class_palette <- data.frame(
-  class_eng = c("Water", "Forest", "Wetland", "Agriculture", "Built Area", "Bare Ground", "Snow/Ice", "Clouds", "Rangeland"),
-  color = c("#2596be", "#41ae42", "#b6e0b6", "#ffe55c", "#df4242", "#d6c99a", "#cccccc", "#b2b6b6", "#efbc2f"),
-  icon = c("fa-water", "fa-tree", "fa-water", "fa-seedling", "fa-city", "fa-mountain", "fa-snowflake", "fa-cloud", "fa-tractor")
+  class_eng = c(
+    "Water", "Forest", "Wetland", "Agriculture", "Built Area",
+    "Bare Ground", "Snow/Ice", "Clouds", "Rangeland"
+  ),
+  color = c(
+    "rgba(37,150,190,0.7)",  # Water
+    "rgba(65,174,66,0.7)",   # Forest
+    "rgba(182,224,182,0.7)", # Wetland
+    "rgba(255,229,92,0.7)",  # Agriculture
+    "rgba(223,66,66,0.7)",   # Built Area
+    "rgba(214,201,154,0.7)", # Bare Ground
+    "rgba(204,204,204,0.7)", # Snow/Ice
+    "rgba(178,182,182,0.7)", # Clouds
+    "rgba(239,188,47,0.7)"   # Rangeland
+  ),
+  icon = c(
+    "fa-water", "fa-tree", "fa-water", "fa-seedling",
+    "fa-city", "fa-mountain", "fa-snowflake", "fa-cloud",
+    "fa-tractor"
+  )
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
