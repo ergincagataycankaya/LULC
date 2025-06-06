@@ -41,26 +41,19 @@ ui <- fluidPage(
       .lulc-legend-dot {
         width: 13px; height: 13px; border-radius: 50%; display: inline-block;
         margin-right: 5px; border: 1.1px solid #bbb;
+        opacity: 0.7;
       }
       .lulc-legend-icon {
         margin-right: 4px; opacity: 0.92; font-size: 1em;
       }
-      .map-sync-container {
-        display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; padding: 10px;
-      }
-      .map-card {
-        flex: 1 1 320px; min-width: 280px; max-width: 420px;
+      .main-map-container {
+        max-width: 1100px; margin: 0 auto 20px auto; padding: 10px;
         background: #fff; border-radius: 14px; box-shadow: 0 3px 15px rgba(0,0,0,0.09);
-        margin-bottom: 16px;
-        overflow: hidden; position: relative; display: flex; flex-direction: column;
-        transition: box-shadow .18s; border: 1.2px solid #f0f1f5;
       }
-      .map-card-title {
-        background: linear-gradient(90deg,#0092ff88,#41ae4288);
-        color: #fff; font-weight: 900 !important; padding: 8px 18px 6px 15px;
-        font-size: 1.25rem; letter-spacing: 0.5px; border-bottom: 1.5px solid #e5f4ee;
+      .map-below-wrapper {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        gap: 12px; flex-wrap: wrap; padding-top: 10px;
       }
-      .map-card .leaflet-container { min-height: 235px; border-radius: 0 0 7px 7px; z-index: 2; }
       .area-table-container {
         background: #f9fbe8; font-size: 1.18rem; border-top: 1.7px solid #e4e4e4;
         width: 100%; z-index: 6; min-height: 100px;
@@ -79,10 +72,7 @@ ui <- fluidPage(
       .area-class-icon { font-size: 1.23em; margin-right: 7px; font-weight: 900 !important; }
       .area-table td span { font-size: 1.21em !important; font-weight: 900 !important; }
       .lulc-legend-icon { font-size: 1.2em !important; }
-      *, .app-header, .app-subtitle, .map-card-title, .lulc-legend-item, .area-table, .area-table th, .area-table td, .area-class-icon, .lulc-legend-sticky { font-weight: 900 !important; }
-      @media (max-width: 600px) {
-        .map-card { flex: 1 1 100%; min-width: 100%; max-width: 100%; }
-      }
+      *, .app-header, .app-subtitle, .lulc-legend-item, .area-table, .area-table th, .area-table td, .area-class-icon, .lulc-legend-sticky { font-weight: 900 !important; }
     "))
   ),
   tags$div(class = "app-header", "Land Use / Land Cover Dashboard"),
@@ -98,19 +88,13 @@ ui <- fluidPage(
     })
   ),
   div(
-    class = "map-sync-container",
-    lapply(names(lulc_urls), function(yr) {
-      div(
-        class = "map-card",
-        div(class = "map-card-title", paste0("LULC ", yr)),
-        leafletOutput(outputId = paste0("map", yr), height = 235),
-        uiOutput(paste0("area_tbl_", yr), class = "area-table-container"),
-        div(
-          style = "display: flex; justify-content: center; align-items: center; min-height: 260px;",
-          plotlyOutput(paste0("pie_", yr), height = "250px", width = "250px")
-        )
-      )
-    })
+    class = "main-map-container",
+    leafletOutput("big_map", height = "520px"),
+    div(
+      class = "map-below-wrapper",
+      plotlyOutput("big_pie", height = "320px", width = "320px"),
+      uiOutput("area_tbl_big", class = "area-table-container")
+    )
   ),
   # Forest Trend Line Graph
   div(
