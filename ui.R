@@ -2,6 +2,8 @@
 ui <- fluidPage(
   tags$head(
     tags$link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
+    tags$link(rel="stylesheet", href="https://unpkg.com/leaflet-side-by-side@2.0.1/leaflet-side-by-side.min.css"),
+    tags$script(src="https://unpkg.com/leaflet-side-by-side@2.0.1/leaflet-side-by-side.min.js"),
     tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
     tags$style(HTML("
       body, html { background: #f7f9fa; margin: 0; padding: 0; font-family: 'Roboto', Arial, sans-serif; font-weight: bold !important; }

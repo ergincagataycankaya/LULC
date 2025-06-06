@@ -23,23 +23,9 @@
 
 ## Dependencies
 
-The dashboard relies on the `leaflet.extras2` package to enable the before/after
-map slider. If you encounter an error like `could not find function "addSplitMap"`,
-install the package from GitHub:
-
-```r
-if (!requireNamespace("leaflet.extras2", quietly = TRUE)) {
-  devtools::install_github("Timag/leaflet.extras2")
-}
-```
-
-Alternatively you can install `shiny.slider` with
-
-```r
-devtools::install_github("Timag/shiny.slider")
-```
-
-Both packages provide the slider functionality used in this app.
+The swipe comparison uses the JavaScript **Leaflet.SideBySide** plugin loaded
+from a CDN. No additional R packages are required, though `leaflet.extras2` or
+`shiny.slider` can still be installed if you prefer their helper functions.
  
  ---
  
