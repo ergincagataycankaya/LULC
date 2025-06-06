@@ -1,21 +1,22 @@
 source("global.R")
 
 server <- function(input, output, session) {
-  # Helper: Render each LULC map, synced
+  # Helper: Render each LULC map with slider between imagery and overlay
   makeLULCMapSimple <- function(tiler_url) {
     leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
       addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
       addTiles(
         urlTemplate = tiler_url,
-        options     = tileOptions(opacity = 0.75),
+        options     = tileOptions(opacity = 0.7),
         group       = "LULC"
       ) %>%
+      leaflet.extras2::addSplitMap("Satellite", "LULC") %>%
       addResetMapButton() %>%
       setView(lng = 29.0, lat = 41.1, zoom = 12) %>%
       syncWith("maps")
   }
-  
-  # Render LULC maps
+
+  # Render LULC maps and associated widgets
   for (yr in names(lulc_urls)) {
     local({
       year_str    <- yr
@@ -26,8 +27,7 @@ server <- function(input, output, session) {
       })
     })
   }
-  
-  # Render Area tables
+
   for (yr in names(lulc_urls)) {
     local({
       year_str <- yr
@@ -65,8 +65,7 @@ server <- function(input, output, session) {
       })
     })
   }
-  
-  # Render Pie Charts under each table
+
   for (yr in names(lulc_urls)) {
     local({
       year_str <- yr
@@ -82,9 +81,9 @@ server <- function(input, output, session) {
           labels = ~class_eng,
           values = ~area_ha,
           type = 'pie',
-          textinfo = 'percent',            # Only show percent in chart
+          textinfo = 'percent',
           textposition = 'inside',
-          hoverinfo = 'label+percent+value', # Show all info on hover
+          hoverinfo = 'label+percent+value',
           marker = list(colors = dat$color,
                         line = list(color = '#fff', width = 1)),
           showlegend = FALSE,
@@ -94,17 +93,14 @@ server <- function(input, output, session) {
         ) %>%
           layout(
             margin = list(l = 0, r = 0, b = 0, t = 10, pad = 0),
-            height = 250,    # Increase or decrease as needed for your card
-            width = 250,
-            font = list(size = 16, family="Arial Black"),
+            font = list(size = 16, family = "Arial Black"),
             paper_bgcolor = 'rgba(0,0,0,0)',
             plot_bgcolor = 'rgba(0,0,0,0)'
           )
       })
     })
   }
-  
-  
+
   # Forest area trend line
   output$forest_trend <- renderPlotly({
     forest_trend <- subset(area_df, class_eng == "Forest")
