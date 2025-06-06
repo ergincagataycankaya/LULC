@@ -6,9 +6,8 @@
  
  ## 🌐 Live Demo!
  
- You can view the deployed application here:  
- 🔗 [https://ergin.shinyapps.io/LULC/](https://ergin.shinyapps.io/LULC/)
- 
+[![ShinyApps.io](https://img.shields.io/badge/ShinyApp-LULC-blue?logo=R&logoColor=white)](https://ergin.shinyapps.io/LULC/)
+
  ---
  
  ## 📊 Features

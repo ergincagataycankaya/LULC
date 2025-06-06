@@ -1,0 +1,20 @@
+# 🤝 Katkıda Bulunma Rehberi
+
+Teşekkürler! LULC Shiny Dashboard projesine katkıda bulunmak istiyorsanız aşağıdaki kurallara göz atmanız yeterli.
+
+## 📋 Nasıl Katkı Sağlayabilirim?
+
+- 🐞 Hata bildirimi (bug report)
+- 🧠 Yeni özellik önerisi
+- 🧹 Kod iyileştirmesi / refactoring
+- 🌐 UI / görsel düzenlemeler
+- 📖 Dokümantasyon geliştirmeleri
+
+## 🧱 Branch Stratejisi
+
+- Ana dal: `main`
+- Yeni özellikler için `feature/`, hata düzeltmeleri için `fix/`, UI değişiklikleri için `ui/` ile başlayan branch isimleri tercih edilir.
+
+Örnek:
+```bash
+git checkout -b feature/interactive-pie
