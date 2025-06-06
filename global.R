@@ -9,8 +9,8 @@ library(plotly)
 addSwipeControl <- function(map, left_group, right_group) {
   htmlwidgets::onRender(
     map,
-    javascript = sprintf(
-      "function(el, x) {\n  var map = this;\n  var left  = map.layerManager.getLayer('overlay', '%s');\n  var right = map.layerManager.getLayer('overlay', '%s');\n  if(left && right) { L.control.sideBySide(left, right).addTo(map); }\n}",
+    jsCode = sprintf(
+      "function(el, x) {\n  var map = this;\n  var left  = map.layerManager.getLayer('overlay', '%s');\n  var right = map.layerManager.getLayer('overlay', '%s');\n  if (left && right) { L.control.sideBySide(left, right).addTo(map); }\n}",
       left_group, right_group
     )
   )

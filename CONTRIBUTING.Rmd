@@ -18,3 +18,12 @@ Teşekkürler! LULC Shiny Dashboard projesine katkıda bulunmak istiyorsanız a�
 Örnek:
 ```bash
 git checkout -b feature/interactive-pie
+```
+
+## ✔️ Pull Request
+
+- Değişikliklerinizi yerelde test ettikten sonra bir PR açın.
+- Açıklayıcı bir başlık ve özet eklemeyi unutmayın.
+- İlgili ise issue numarasını belirtin.
+
+Katkılarınız için teşekkür ederiz!

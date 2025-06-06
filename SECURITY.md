@@ -18,4 +18,8 @@ We currently provide security updates and patching for the following R versions 
 
 If you discover a security vulnerability or bug in this repository, please follow these steps:
 
-1. **Do not disclose publicly.** Instead, send a direct report via email to:
+1. **Do not disclose publicly.** Instead, send a direct report via email to: security@example.com
+2. Provide clear steps to reproduce the issue and any relevant logs.
+3. Wait for a response before sharing details publicly.
+
+We appreciate responsible disclosure to keep our users safe. Thank you!

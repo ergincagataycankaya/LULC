@@ -20,7 +20,7 @@ server <- function(input, output, session) {
         overlayGroups = names(lulc_urls),
         options = layersControlOptions(collapsed = FALSE)
       ) %>%
-      addSwipeControl(left, right) %>%
+      addSwipeControl(m, left, right) %>%
       addResetMapButton() %>%
       setView(lng = 29.0, lat = 41.1, zoom = 12)
   })
