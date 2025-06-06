@@ -2,6 +2,8 @@
 ui <- fluidPage(
   tags$head(
     tags$link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
+    tags$link(rel="stylesheet", href="https://unpkg.com/leaflet-side-by-side@2.0.1/leaflet-side-by-side.min.css"),
+    tags$script(src="https://unpkg.com/leaflet-side-by-side@2.0.1/leaflet-side-by-side.min.js"),
     tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
     tags$style(HTML("
       body, html { background: #f7f9fa; margin: 0; padding: 0; font-family: 'Roboto', Arial, sans-serif; font-weight: bold !important; }
@@ -46,6 +48,11 @@ ui <- fluidPage(
       .lulc-legend-icon {
         margin-right: 4px; opacity: 0.92; font-size: 1em;
       }
+      .swipe-controls {
+        display: flex; justify-content: center; gap: 10px;
+        margin: 10px 0; flex-wrap: wrap;
+      }
+      .swipe-controls .form-group { margin-bottom: 0; }
       .main-map-container {
         max-width: 1100px; margin: 0 auto 20px auto; padding: 10px;
         background: #fff; border-radius: 14px; box-shadow: 0 3px 15px rgba(0,0,0,0.09);
@@ -86,6 +93,11 @@ ui <- fluidPage(
                 class_palette$class_eng[i]
       )
     })
+  ),
+  div(
+    class = "swipe-controls",
+    selectInput("left_year", "Left Year", choices = years, selected = 2019),
+    selectInput("right_year", "Right Year", choices = years, selected = 2023)
   ),
   div(
     class = "main-map-container",

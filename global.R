@@ -2,9 +2,19 @@ library(shiny)
 library(leaflet)
 library(leaflet.minicharts)
 library(leaflet.extras)
-library(leaflet.extras2)
-library(shiny.slider) # for before/after slider functionality
 library(plotly)
+
+# Helper to add a side-by-side swipe control without relying on
+# leaflet.extras2::addSplitMap (not exported in some versions).
+addSwipeControl <- function(map, left_group, right_group) {
+  htmlwidgets::onRender(
+    map,
+    javascript = sprintf(
+      "function(el, x) {\n  var map = this;\n  var left  = map.layerManager.getLayer('overlay', '%s');\n  var right = map.layerManager.getLayer('overlay', '%s');\n  if(left && right) { L.control.sideBySide(left, right).addTo(map); }\n}",
+      left_group, right_group
+    )
+  )
+}
 
 
 area_df <- read.table(header=TRUE, text="
