@@ -1,16 +1,9 @@
-
----
-
-## 🚀 2. `deploy-shinyapps.yml` – Otomatik Yayınlama Workflow'u
-
-Kaydet: `.github/workflows/deploy-shinyapps.yml`
-
-```yaml
 name: Deploy to shinyapps.io
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - "main"
 
 jobs:
   deploy:
