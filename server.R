@@ -18,7 +18,7 @@ server <- function(input, output, session) {
         overlayGroups = names(lulc_urls),
         options = layersControlOptions(collapsed = FALSE)
       ) %>%
-      leaflet.extras2::addSplitMap("Satellite", "2023") %>%
+      # leaflet.extras2::addSplitMap("Satellite", "2023") %>%
       addResetMapButton() %>%
       setView(lng = 29.0, lat = 41.1, zoom = 12)
   })
