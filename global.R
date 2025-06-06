@@ -58,6 +58,7 @@ area_df$year <- as.character(area_df$year)
 
 
 # LULC class color palette & icons (add/edit if needed)
+
 class_palette <- data.frame(
   class_eng = c(
     "Water", "Forest", "Wetland", "Agriculture", "Built Area",
@@ -80,6 +81,7 @@ class_palette <- data.frame(
     "fa-tractor"
   )
 )
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1) DEFINE A SINGLE COLORMAP STRING (URL‐ENCODED)

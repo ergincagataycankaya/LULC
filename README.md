@@ -4,11 +4,10 @@
  
  ---
  
- ## 🌐 Live Demo
+ ## 🌐 Live Demo!
  
- You can view the deployed application here:  
- 🔗 [https://ergin.shinyapps.io/LULC/](https://ergin.shinyapps.io/LULC/)
- 
+[![ShinyApps.io](https://img.shields.io/badge/ShinyApp-LULC-blue?logo=R&logoColor=white)](https://ergin.shinyapps.io/LULC/)
+
  ---
  
  ## 📊 Features
@@ -20,6 +19,10 @@
 - 🖼️ Clean and modern UI with responsive layout and custom CSS
 - 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
 - ➕ Collapsible map panels with before/after slider
+ - 📈 **Pie Charts** visualizing class composition by year
+ - 🌲 **Trend Line** showing forest area changes over time
+ - 🖼️ Clean and modern UI with responsive layout and custom CSS
+- 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
 - 🛰️ Satellite imagery base maps with LULC overlay
 - ↩️ Reset zoom button on each map
 
