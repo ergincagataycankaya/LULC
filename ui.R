@@ -46,6 +46,11 @@ ui <- fluidPage(
       .lulc-legend-icon {
         margin-right: 4px; opacity: 0.92; font-size: 1em;
       }
+      .swipe-controls {
+        display: flex; justify-content: center; gap: 10px;
+        margin: 10px 0; flex-wrap: wrap;
+      }
+      .swipe-controls .form-group { margin-bottom: 0; }
       .main-map-container {
         max-width: 1100px; margin: 0 auto 20px auto; padding: 10px;
         background: #fff; border-radius: 14px; box-shadow: 0 3px 15px rgba(0,0,0,0.09);
@@ -86,6 +91,11 @@ ui <- fluidPage(
                 class_palette$class_eng[i]
       )
     })
+  ),
+  div(
+    class = "swipe-controls",
+    selectInput("left_year", "Left Year", choices = years, selected = 2019),
+    selectInput("right_year", "Right Year", choices = years, selected = 2023)
   ),
   div(
     class = "main-map-container",

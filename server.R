@@ -2,6 +2,8 @@ source("global.R")
 
 server <- function(input, output, session) {
   output$big_map <- renderLeaflet({
+    left  <- input$left_year
+    right <- input$right_year
     m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
       addProviderTiles("Esri.WorldImagery", group = "Satellite")
     for (yr in names(lulc_urls)) {
@@ -12,25 +14,19 @@ server <- function(input, output, session) {
       )
     }
     m %>%
-      hideGroup(as.character(2019:2022)) %>%
+      hideGroup(setdiff(names(lulc_urls), c(left, right))) %>%
       addLayersControl(
         baseGroups = c("Satellite"),
         overlayGroups = names(lulc_urls),
         options = layersControlOptions(collapsed = FALSE)
       ) %>%
-      # leaflet.extras2::addSplitMap("Satellite", "2023") %>%
+      leaflet.extras2::addSplitMap(left, right) %>%
       addResetMapButton() %>%
       setView(lng = 29.0, lat = 41.1, zoom = 12)
   })
 
   selected_year <- reactive({
-    groups <- input$big_map_groups
-    yrs <- intersect(names(lulc_urls), groups)
-    if (length(yrs) == 0) {
-      "2023"
-    } else {
-      tail(yrs, 1)
-    }
+    input$right_year
   })
 
   output$area_tbl_big <- renderUI({
