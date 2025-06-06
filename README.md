@@ -18,9 +18,29 @@
  - 📈 **Pie Charts** visualizing class composition by year
  - 🌲 **Trend Line** showing forest area changes over time
  - 🖼️ Clean and modern UI with responsive layout and custom CSS
- - 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
+- 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
 - 🛰️ Satellite imagery base maps with LULC overlay
 - ↩️ Reset zoom button on each map
+
+## Dependencies
+
+The dashboard relies on the `leaflet.extras2` package to enable the before/after
+map slider. If you encounter an error like `could not find function "addSplitMap"`,
+install the package from GitHub:
+
+```r
+if (!requireNamespace("leaflet.extras2", quietly = TRUE)) {
+  devtools::install_github("Timag/leaflet.extras2")
+}
+```
+
+Alternatively you can install `shiny.slider` with
+
+```r
+devtools::install_github("Timag/shiny.slider")
+```
+
+Both packages provide the slider functionality used in this app.
  
  ---
  
