@@ -1,39 +1,71 @@
 source("global.R")
 
 server <- function(input, output, session) {
-  output$big_map <- renderLeaflet({
-    left  <- input$left_year
-    right <- input$right_year
-    m <- leaflet(options = leafletOptions(zoomControl = TRUE)) %>%
-      addProviderTiles("Esri.WorldImagery", group = "Satellite")
-    for (yr in names(lulc_urls)) {
-      m <- m %>% addTiles(
-        urlTemplate = lulc_urls[[yr]],
-        options     = tileOptions(opacity = 0.7),
-        group       = yr
-      )
-    }
-    m %>%
-      hideGroup(setdiff(names(lulc_urls), c(left, right))) %>%
-      addLayersControl(
-        baseGroups = c("Satellite"),
-        overlayGroups = names(lulc_urls),
-        options = layersControlOptions(collapsed = FALSE)
-      ) %>%
-      addSwipeControl(m, left, right) %>%
-      addResetMapButton() %>%
-      setView(lng = 29.0, lat = 41.1, zoom = 12)
+  
+  # helper to build your tile URL
+  get_tile_url <- function(year) lulc_urls[[as.character(year)]]
+  
+  # ──────────────────────────────────────────────────────────────────────────────
+  # 1) CUSTOM LEGEND ABOVE THE TWO MAPS
+  # ──────────────────────────────────────────────────────────────────────────────
+  output$map_legend <- renderUI({
+    tags$div(class="map-legend",
+             lapply(names(new_colors)[1:9], function(cl) {
+               tags$span(
+                 tags$span(class="dot", style=sprintf("background:%s;", new_colors[cl])),
+                 cl
+               )
+             })
+    )
   })
-
-  selected_year <- reactive({
-    input$right_year
+  
+  # Helper to pick a single year from checkboxGroupInput (first checked)
+  single_year <- function(input_val) {
+    sel <- input_val()
+    if(length(sel)) sel[1] else NULL
+  }
+  
+  # MAPS
+  output$map_left <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("Esri.WorldImagery") %>%
+      addTiles(get_tile_url(single_year(reactive(input$left_year)))) %>%
+      setView(29.0,41.1,zoom=12)
   })
-
-  output$area_tbl_big <- renderUI({
-    year_str <- selected_year()
-    dat <- subset(area_df, year == year_str)
-    if (nrow(dat) == 0) return(NULL)
+  output$map_right <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("Esri.WorldImagery") %>%
+      addTiles(get_tile_url(single_year(reactive(input$right_year)))) %>%
+      setView(29.0,41.1,zoom=12)
+  })
+  observe({ session$sendCustomMessage("sync_maps", list()) })
+  
+  # RESET
+  observeEvent(input$reset_left, {
+    leafletProxy("map_left") %>% setView(29.0,41.1,zoom=12)
+  })
+  observeEvent(input$reset_right, {
+    leafletProxy("map_right") %>% setView(29.0,41.1,zoom=12)
+  })
+  
+  # 3) PIE DATA (GROUP < 1% AS “Other”)
+  output$map_legend <- renderUI({
+    tags$div(class="map-legend",
+             lapply(names(new_colors)[1:9], function(cl) {
+               tags$span(
+                 tags$span(class="dot", style=sprintf("background:%s;", new_colors[cl])),
+                 cl
+               )
+             })
+    )
+  })
+  
+  
+  # --- TABLES (Professional Look) ---
+  output$table_left <- renderUI({
+    dat <- subset(area_df, year == input$left_year)
     dat <- merge(dat, class_palette, by = "class_eng", all.x = TRUE)
+    dat <- dat[order(match(dat$class_eng, class_palette$class_eng)), ]
     tags$table(class = "area-table",
                tags$thead(
                  tags$tr(
@@ -45,10 +77,9 @@ server <- function(input, output, session) {
                  lapply(seq_len(nrow(dat)), function(i) {
                    tags$tr(
                      tags$td(
-                       tags$span(
-                         class = "area-class-icon",
-                         style = paste0("color:", dat$color[i]),
-                         tags$i(class = paste("fa", dat$icon[i]))
+                       tags$span(class = "area-class-icon",
+                                 style = paste0("color:", dat$color[i]),
+                                 tags$i(class = paste("fa", dat$icon[i]))
                        ),
                        tags$span(dat$class_eng[i])
                      ),
@@ -62,62 +93,74 @@ server <- function(input, output, session) {
                )
     )
   })
-
-  output$big_pie <- renderPlotly({
-    year_str <- selected_year()
-    dat <- subset(area_df, year == year_str)
-    if (nrow(dat) == 0) return(NULL)
+  output$table_right <- renderUI({
+    dat <- subset(area_df, year == input$right_year)
     dat <- merge(dat, class_palette, by = "class_eng", all.x = TRUE)
     dat <- dat[order(match(dat$class_eng, class_palette$class_eng)), ]
-    total_area <- sum(dat$area_ha)
-    dat$perc <- round(100 * dat$area_ha / total_area, 2)
-    plot_ly(
-      dat,
-      labels = ~class_eng,
-      values = ~area_ha,
-      type = 'pie',
-      textinfo = 'percent',
-      textposition = 'inside',
-      hoverinfo = 'label+percent+value',
-      marker = list(colors = dat$color,
-                    line = list(color = '#fff', width = 1)),
-      showlegend = FALSE,
-      sort = FALSE,
-      direction = "clockwise",
-      insidetextorientation = "auto"
-    ) %>%
-      layout(
-        margin = list(l = 0, r = 0, b = 0, t = 10, pad = 0),
-        height = 250,
-        width = 250,
-        font = list(size = 16, family = "Arial Black"),
-        paper_bgcolor = 'rgba(0,0,0,0)',
-        plot_bgcolor = 'rgba(0,0,0,0)'
-      )
+    tags$table(class = "area-table",
+               tags$thead(
+                 tags$tr(
+                   tags$th("Class"),
+                   tags$th("Area (ha)")
+                 )
+               ),
+               tags$tbody(
+                 lapply(seq_len(nrow(dat)), function(i) {
+                   tags$tr(
+                     tags$td(
+                       tags$span(class = "area-class-icon",
+                                 style = paste0("color:", dat$color[i]),
+                                 tags$i(class = paste("fa", dat$icon[i]))
+                       ),
+                       tags$span(dat$class_eng[i])
+                     ),
+                     tags$td(
+                       tags$span(style = paste0("color:", dat$color[i]),
+                                 formatC(dat$area_ha[i], digits = 0, big.mark = ",", format = "f")
+                       )
+                     )
+                   )
+                 })
+               )
+    )
   })
   
-  
-  # Forest area trend line
-  output$forest_trend <- renderPlotly({
-    forest_trend <- subset(area_df, class_eng == "Forest")
-    plot_ly(
-      forest_trend,
-      x = ~as.numeric(year),
-      y = ~area_ha,
-      type = 'scatter',
-      mode = 'lines+markers',
-      line = list(color = '#228B22', width = 3),
-      marker = list(size = 10, color = '#41ae42'),
-      hovertemplate = paste(
-        "<b>Year:</b> %{x}<br>",
-        "<b>Forest Area (ha):</b> %{y:,.0f}<extra></extra>"
-      )
-    ) %>%
-      layout(
-        xaxis = list(title = "Year", dtick = 1, tickmode = "linear"),
-        yaxis = list(title = "Forest Area (ha)", rangemode = "tozero"),
-        showlegend = FALSE,
-        margin = list(l = 60, r = 15, b = 55, t = 20)
-      )
+  # --- GROUPED BAR CHART WITH HIGHLIGHTED SELECTED YEARS ---
+  output$bar_compare <- renderPlotly({
+    left_year <- input$left_year
+    right_year <- input$right_year
+    plot_df <- area_df[area_df$year %in% c(left_year, right_year),]
+    plot_df <- merge(plot_df, class_palette, by = "class_eng", all.x = TRUE)
+    plot_df$class_eng <- factor(plot_df$class_eng, levels = class_palette$class_eng)
+    plot_df$year <- as.factor(plot_df$year)
+    
+    # Draw grouped bar
+    p <- plot_ly(
+      plot_df, x = ~class_eng, y = ~area_ha, color = ~year,
+      colors = c("#1976d2", "#ff7f0e"),
+      type = "bar",
+      hoverinfo = 'text',
+      text = ~paste0("Year: ", year, "<br>", "Area: ", formatC(area_ha, big.mark=",", digits=0, format="f"))
+    )
+    
+    # Add dashed lines connecting the two selected bars (for each class)
+    for(cl in levels(plot_df$class_eng)) {
+      vals <- plot_df[plot_df$class_eng == cl, ]
+      if(nrow(vals)==2) {
+        p <- add_segments(p,
+                          x = cl, xend = cl,
+                          y = min(vals$area_ha), yend = max(vals$area_ha),
+                          line = list(dash = "dash", color = "#1976d2", width = 3),
+                          showlegend = FALSE, inherit = FALSE
+        )
+      }
+    }
+    p %>% layout(
+      yaxis = list(title = "Area (ha)"),
+      xaxis = list(title = ""),
+      barmode = "group",
+      legend = list(x=0.85, y=1),
+      margin = list(l = 60, r = 10, b = 60, t = 20)
+    )
   })
 }

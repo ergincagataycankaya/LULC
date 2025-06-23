@@ -1,21 +1,38 @@
 library(shiny)
 library(leaflet)
-library(leaflet.minicharts)
-library(leaflet.extras)
 library(plotly)
+library(DT)
+library(leaflet.extras)
 
-# Helper to add a side-by-side swipe control without relying on
-# leaflet.extras2::addSplitMap (not exported in some versions).
-addSwipeControl <- function(map, left_group, right_group) {
-  htmlwidgets::onRender(
-    map,
-    jsCode = sprintf(
-      "function(el, x) {\n  var map = this;\n  var left  = map.layerManager.getLayer('overlay', '%s');\n  var right = map.layerManager.getLayer('overlay', '%s');\n  if (left && right) { L.control.sideBySide(left, right).addTo(map); }\n}",
-      left_group, right_group
-    )
-  )
-}
 
+years <- 2019:2023
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 0) Your new RGBA → hex palette & lookup
+# ──────────────────────────────────────────────────────────────────────────────
+new_colors <- c(
+  "Water"       = "#2A61B0",
+  "Forest"      = "#217B55",
+  "Wetland"     = "#6D5FAA",
+  "Agriculture" = "#E78E0D",
+  "Built-Area"  = "#EF0606",
+  "Bare Ground" = "#D6D6D6",
+  "Snow/Ice"    = "#9FE2E8",
+  "Clouds"      = "#535353",
+  "Rangeland"   = "#DDD25D",
+  "Other"       = "#BBBBBB"
+)
+lut <- c(
+  `1`  = "Water",
+  `2`  = "Forest",
+  `4`  = "Wetland",
+  `5`  = "Agriculture",
+  `7`  = "Built-Area",
+  `8`  = "Bare Ground",
+  `9`  = "Snow/Ice",
+  `10` = "Clouds",
+  `11` = "Rangeland"
+)
 
 area_df <- read.table(header=TRUE, text="
 year value class_eng area_ha
@@ -67,23 +84,21 @@ year value class_eng area_ha
 ", stringsAsFactors = FALSE)
 area_df$year <- as.character(area_df$year)
 
-
-# LULC class color palette & icons (add/edit if needed)
 class_palette <- data.frame(
   class_eng = c(
     "Water", "Forest", "Wetland", "Agriculture", "Built Area",
     "Bare Ground", "Snow/Ice", "Clouds", "Rangeland"
   ),
   color = c(
-    "rgba(37,150,190,0.7)",  # Water
-    "rgba(65,174,66,0.7)",   # Forest
-    "rgba(182,224,182,0.7)", # Wetland
-    "rgba(255,229,92,0.7)",  # Agriculture
-    "rgba(223,66,66,0.7)",   # Built Area
-    "rgba(214,201,154,0.7)", # Bare Ground
-    "rgba(204,204,204,0.7)", # Snow/Ice
-    "rgba(178,182,182,0.7)", # Clouds
-    "rgba(239,188,47,0.7)"   # Rangeland
+    "#2596be",  # Water
+    "#41ae42",  # Forest
+    "#b6e0b6",  # Wetland
+    "#ffe55c",  # Agriculture
+    "#df4242",  # Built Area
+    "#d6c99a",  # Bare Ground
+    "#cccccc",  # Snow/Ice
+    "#b2b6b6",  # Clouds
+    "#efbc2f"   # Rangeland
   ),
   icon = c(
     "fa-water", "fa-tree", "fa-water", "fa-seedling",
@@ -92,16 +107,7 @@ class_palette <- data.frame(
   )
 )
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 1) DEFINE A SINGLE COLORMAP STRING (URL‐ENCODED)
-#    – This is the same colormap block for all five years.
-#    – Do NOT insert any line breaks inside this quoted string.
-colormap_block <- "%5B%5B%5B1%2C%201.6%5D%2C%20%5B0%2C%200%2C%20131%2C%20255%5D%5D%2C%20%5B%5B1.6%2C%202.2%5D%2C%20%5B0%2C%2030%2C%20151%2C%20255%5D%5D%2C%20%5B%5B2.2%2C%202.8%5D%2C%20%5B0%2C%2060%2C%20170%2C%20255%5D%5D%2C%20%5B%5B2.8%2C%203.4%5D%2C%20%5B1%2C%2099%2C%20187%2C%20255%5D%5D%2C%20%5B%5B3.4%2C%204%5D%2C%20%5B2%2C%20138%2C%20204%2C%20255%5D%5D%2C%20%5B%5B4%2C%204.6%5D%2C%20%5B3%2C%20177%2C%20221%2C%20255%5D%5D%2C%20%5B%5B4.6%2C%205.2%5D%2C%20%5B4%2C%20216%2C%20238%2C%20255%5D%5D%2C%20%5B%5B5.2%2C%205.8%5D%2C%20%5B5%2C%20255%2C%20255%2C%20255%5D%5D%2C%20%5B%5B5.8%2C%206.4%5D%2C%20%5B55%2C%20255%2C%20204%2C%20255%5D%5D%2C%20%5B%5B6.4%2C%207%5D%2C%20%5B105%2C%20255%2C%20153%2C%20255%5D%5D%2C%20%5B%5B7%2C%207.6%5D%2C%20%5B155%2C%20255%2C%20102%2C%20255%5D%5D%2C%20%5B%5B7.6%2C%208.2%5D%2C%20%5B205%2C%20255%2C%2051%2C%20255%5D%5D%2C%20%5B%5B8.2%2C%208.8%5D%2C%20%5B255%2C%20255%2C%200%2C%20255%5D%5D%2C%20%5B%5B8.8%2C%209.4%5D%2C%20%5B254%2C%20204%2C%200%2C%20255%5D%5D%2C%20%5B%5B9.4%2C%2010%5D%2C%20%5B253%2C%20153%2C%200%2C%20255%5D%5D%2C%20%5B%5B10%2C%2010.6%5D%2C%20%5B252%2C%20102%2C%200%2C%20255%5D%5D%2C%20%5B%5B10.6%2C%2011.2%5D%2C%20%5B251%2C%2051%2C%200%2C%20255%5D%5D%2C%20%5B%5B11.2%2C%2011.8%5D%2C%20%5B250%2C%200%2C%200%2C%20255%5D%5D%2C%20%5B%5B11.8%2C%2012.4%5D%2C%20%5B189%2C%200%2C%200%2C%20255%5D%5D%2C%20%5B%5B12.4%2C%2013%5D%2C%20%5B128%2C%200%2C%200%2C%20255%5D%5D%5D"
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 2) SPECIFY A NAMED LIST OF YEARS → THEIR MAP_IDs
-#    (so we can loop rather than hard-code five separate variables)
-years   <- 2019:2023
+# Raster tile URLs for each year
 map_ids <- list(
   "2019" = "e89d93ac-5816-4771-be04-1434e3e02f00",
   "2020" = "2c1bcbac-4733-4c7b-ad79-40227fdf0dd2",
@@ -109,8 +115,8 @@ map_ids <- list(
   "2022" = "894992b8-57d6-4e3e-b3c3-fe13a573f956",
   "2023" = "d38e21eb-b8ab-4879-9ac1-e0369fc8b213"
 )
+colormap_block <- "%5B%5B%5B1%2C%202%5D%2C%20%5B42%2C%2097%2C%20176%2C%20255%5D%5D%2C%20%5B%5B2%2C%203%5D%2C%20%5B33%2C%20123%2C%2085%2C%20255%5D%5D%2C%20%5B%5B4%2C%205%5D%2C%20%5B109%2C%2095%2C%20170%2C%20255%5D%5D%2C%20%5B%5B5%2C%206%5D%2C%20%5B231%2C%20142%2C%2013%2C%20255%5D%5D%2C%20%5B%5B7%2C%208%5D%2C%20%5B239%2C%206%2C%206%2C%20255%5D%5D%2C%20%5B%5B8%2C%209%5D%2C%20%5B214%2C%20214%2C%20214%2C%20255%5D%5D%2C%20%5B%5B9%2C%2010%5D%2C%20%5B159%2C%20226%2C%20232%2C%20255%5D%5D%2C%20%5B%5B10%2C%2011%5D%2C%20%5B83%2C%2083%2C%2083%2C%20255%5D%5D%2C%20%5B%5B11%2C%2012%5D%2C%20%5B221%2C%20210%2C%2093%2C%20255%5D%5D%5D"
 
-# Build full URLs programmatically, all sharing the same colormap_block
 lulc_urls <- lapply(map_ids, function(id) {
   paste0(
     "https://api-main-432878571563.europe-west4.run.app/tiler/raster/",
@@ -118,4 +124,4 @@ lulc_urls <- lapply(map_ids, function(id) {
     "&colormap=", colormap_block
   )
 })
-# lulc_urls is now a named list: lulc_urls[["2019"]], lulc_urls[["2020"]], etc.
+names(lulc_urls) <- names(map_ids)

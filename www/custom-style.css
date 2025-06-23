@@ -1,0 +1,115 @@
+/* 1) Global reset & fonts */
+body, html {
+  margin: 0;
+  padding: 0;
+  background: #f4f8fb;
+  font-family: 'Inter', 'Roboto', Arial, sans-serif;
+}
+
+/* 2) All text bold */
+body, body * {
+  font-weight: 900 !important;
+}
+
+/* 3) Header & subtitle */
+.app-header {
+  background: linear-gradient(90deg, #1976d2 0%, #43a047 100%);
+  color: #fff;
+  text-align: center;
+  font-size: 2.5rem;
+  padding: 26px 0 14px;
+  letter-spacing: 1.1px;
+  border-radius: 0 0 26px 26px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+}
+.app-subtitle {
+  background: #e6f1ee;
+  color: #15633c;
+  text-align: center;
+  font-size: 1.19rem;
+  padding: 11px 0 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #b4dcc5;
+  letter-spacing: 0.5px;
+  box-shadow: 0 1px 6px rgba(0,80,20,0.04);
+}
+
+/* 4) Map legend */
+.map-legend {
+  text-align: center;
+  margin: 16px 0 8px;
+}
+.map-legend .dot {
+  width: 14px; height: 14px;
+  border-radius: 7px;
+  display: inline-block;
+  margin-right: 6px;
+}
+.map-legend span { margin-right: 14px; }
+
+/* 5) Panel styling */
+.panel-box {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 3px 16px rgba(0,0,0,0.06);
+  padding: 15px 22px 22px;
+  margin-bottom: 30px;
+}
+
+/* 6) Checkbox full width */
+.shiny-input-container.checkbox-group-input {
+  width: 100%;
+}
+
+/* 7) Side-by-side pie & table */
+.flexrow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-top: 10px;
+}
+.pie-panel {
+  flex: 0 0 45%;
+  display: flex;
+  justify-content: center;
+}
+.table-panel {
+  flex: 0 0 50%;
+}
+
+/* 8) Pie chart label sizes */
+.plotly .slice text {
+  font-size: 10px !important;
+}
+
+/* 9) Area table */
+.area-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.1rem;
+}
+.area-table th, .area-table td {
+  padding: 8px 10px;
+  text-align: left;
+}
+.area-table th {
+  background: #e9ecef;
+  border-bottom: 2px solid #dadada;
+}
+.area-table td {
+  border-bottom: 1.1px solid #f1f2f6;
+}
+.area-table tr:last-child td {
+  border-bottom: none;
+}
+.area-class-icon {
+  font-size: 1.14em;
+  margin-right: 7px;
+}
+
+/* 10) Responsive */
+@media (max-width: 900px) {
+  .flexrow { flex-direction: column; }
+}
