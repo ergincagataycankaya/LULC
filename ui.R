@@ -2,24 +2,25 @@
 ui <- fluidPage(
   tags$head(
     tags$link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"),
+    tags$link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap"),
     tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
     tags$style(HTML("
-      body, html { background: #f7f9fa; margin: 0; padding: 0; font-family: 'Roboto', Arial, sans-serif; font-weight: bold !important; }
+      body, html { background: #f7f9fa; margin: 0; padding: 0; font-family: 'Merriweather', 'Times New Roman', serif; font-weight: 400; line-height:1.6; }
       .app-header {
-        background: linear-gradient(90deg, #007bff 0, #41ae42 100%);
-        color: #fff; padding: 22px 0 10px 0;
-        text-align: center; font-size: 2.7rem; font-weight: 900 !important; letter-spacing: 1px;
-        margin-bottom: 0; box-shadow: 0 4px 16px rgba(0,0,0,0.11);
+        background: #2e5f3e;
+        color: #fff; padding: 20px 0 12px 0;
+        text-align: center; font-size: 2.3rem; font-weight: 700; letter-spacing: 0.5px;
+        margin-bottom: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       }
       .app-subtitle {
-        background: #e6f1ee;
-        text-align: center; color: #15633c; font-size: 1.25rem;
-        font-weight: 900 !important;
-        padding: 10px 0 10px 0;
-        margin-bottom: 16px;
-        border-bottom: 1.5px solid #b4dcc5;
-        letter-spacing: 0.4px;
-        box-shadow: 0 2px 8px rgba(0,80,20,0.04);
+        background: #e8efe8;
+        text-align: center; color: #2e5f3e; font-size: 1.1rem;
+        font-weight: 400;
+        padding: 8px 0 8px 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #cbd5cb;
+        letter-spacing: 0.3px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       }
       .lulc-legend-sticky {
         background: #f4f5fa;
@@ -30,12 +31,11 @@ ui <- fluidPage(
         max-width: 1100px;
         display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;
         gap: 6px;
-        font-weight: 900 !important;
       }
       .lulc-legend-item {
         display: flex; align-items: center;
         font-size: 0.95rem;
-        font-weight: 900 !important;
+        font-weight: 500;
         min-width: 80px; margin-bottom: 0px; margin-right: 0;
       }
       .lulc-legend-dot {
@@ -63,21 +63,22 @@ ui <- fluidPage(
         background: #f9fbe8; font-size: 1.18rem; border-top: 1.7px solid #e4e4e4;
         width: 100%; z-index: 6; min-height: 100px;
         border-radius: 0 0 12px 12px;
-        font-weight: 900 !important; padding-bottom: 2px;
+        font-weight: 400; padding-bottom: 2px;
       }
       .area-table {
-        width: 100%; border-collapse: collapse; background: none; font-size: 1.11rem; font-weight: 900 !important;
+        width: 100%; border-collapse: collapse; background: none; font-size: 1.11rem; font-weight: 400;
       }
       .area-table th, .area-table td {
-        padding: 7px 10px; text-align: left; font-size: 1.11rem; font-weight: 900 !important;
+        padding: 7px 10px; text-align: left; font-size: 1.11rem; font-weight: 400;
       }
       .area-table th { background: #e9ecef; border-bottom: 2px solid #dadada; font-size: 1.2rem; }
       .area-table td { border-bottom: 1.2px solid #f1f2f6; }
       .area-table tr:last-child td { border-bottom: none; }
-      .area-class-icon { font-size: 1.23em; margin-right: 7px; font-weight: 900 !important; }
-      .area-table td span { font-size: 1.21em !important; font-weight: 900 !important; }
+      .area-class-icon { font-size: 1.23em; margin-right: 7px; font-weight: 500; }
+      .area-table td span { font-size: 1.21em !important; font-weight: 500; }
       .lulc-legend-icon { font-size: 1.2em !important; }
-      *, .app-header, .app-subtitle, .lulc-legend-item, .area-table, .area-table th, .area-table td, .area-class-icon, .lulc-legend-sticky { font-weight: 900 !important; }
+      .citation-block { text-align: center; font-size: 0.9rem; color: #555; padding: 20px 0; }
+      .citation-block a { color: #2e5f3e; text-decoration: none; }
     "))
   ),
   tags$div(class = "app-header", "Land Use / Land Cover Dashboard"),
@@ -109,7 +110,16 @@ ui <- fluidPage(
   # Forest Trend Line Graph
   div(
     style = "max-width:1000px; margin:30px auto 35px auto; background: #fff; border-radius: 16px; box-shadow: 0 3px 15px rgba(0,0,0,0.09); padding: 18px;",
-    h3("Forest Area Change (2019–2023)", style="text-align:center; margin-bottom:12px; color:#1a6530; font-weight:900;"),
+    h3("Forest Area Change (2019–2023)", style="text-align:center; margin-bottom:12px; color:#1a6530; font-weight:700;"),
     plotlyOutput("forest_trend", height = "260px")
+  ),
+  tags$div(
+    class = "citation-block",
+    tags$p(
+      "Advancing Forest Land Monitoring in Istanbul Regional Directorate of Forestry: Integrating U-Net Deep Learning. ",
+      tags$em("ArtGRID - Journal of Architecture Engineering and Fine Arts"),
+      " 7(1), 26–44, July 2025. ",
+      tags$a(href = "https://doi.org/10.57165/artgrid.1709260", "doi:10.57165/artgrid.1709260")
+    )
   )
 )
