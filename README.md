@@ -16,10 +16,16 @@
  - 🧾 **Area Statistics Tables** with color-coded icons for each LULC class
  - 📈 **Pie Charts** visualizing class composition by year
  - 🌲 **Trend Line** showing forest area changes over time
- - 🖼️ Clean and modern UI with responsive layout and custom CSS
+- 🖼️ Clean and modern UI with responsive layout and custom CSS
 - 🔁 Supports synchronized map views (when used with `leaflet.extras2::syncWith()`)
 - 🛰️ Satellite imagery base maps with LULC overlay
 - ↩️ Reset zoom button on each map
+
+## 📄 Academic Reference
+
+This dashboard accompanies the study:
+
+> Advancing Forest Land Monitoring in Istanbul Regional Directorate of Forestry: Integrating U-Net Deep Learning. *ArtGRID - Journal of Architecture Engineering and Fine Arts*, 7(1), 26–44. [https://doi.org/10.57165/artgrid.1709260](https://doi.org/10.57165/artgrid.1709260)
 
 ## Dependencies
 
