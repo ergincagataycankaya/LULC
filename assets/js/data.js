@@ -159,7 +159,8 @@ export const CITATION = {
   journal: 'Journal of Architecture, Engineering & Fine Arts (ArtGRID)',
   volume: '7(1)',
   pages: '26-44',
-  url: 'https://dergipark.org.tr/en/pub/artgrid/issue/93103/1709260',
+  doi: '10.57165/artgrid.1709260',
+  url: 'https://doi.org/10.57165/artgrid.1709260',
   pdf: 'docs/cankaya-2025-istanbul-rdf-lulc.pdf'
 };
 

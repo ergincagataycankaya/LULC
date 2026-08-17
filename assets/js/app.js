@@ -810,7 +810,8 @@ function wireReadout() {
 function fillAbout() {
   $('#cite-text').innerHTML =
     `${CITATION.authors} (${CITATION.year}). ${CITATION.title}. ` +
-    `<em>${CITATION.journal}</em>, ${CITATION.volume}, ${CITATION.pages}.`;
+    `<em>${CITATION.journal}</em>, ${CITATION.volume}, ${CITATION.pages}. ` +
+    `<span class="num">doi:${CITATION.doi}</span>`;
   $('#cite-link').href = CITATION.url;
   $('#cite-pdf').href = CITATION.pdf;
   $('#area-provinces').textContent = STUDY_AREA.provinces.join(', ');

@@ -10,7 +10,7 @@ The figures shown in the application are the published totals from:
 > Çankaya, E. Ç., Gencal, B., & Sönmez, T. (2025). *Advancing forest land monitoring in
 > Istanbul Regional Directorate of Forestry: integrating U-Net deep learning.*
 > Journal of Architecture, Engineering & Fine Arts (ArtGRID), 7(1), 26–44.
-> [Journal record](https://dergipark.org.tr/en/pub/artgrid/issue/93103/1709260) ·
+> [doi:10.57165/artgrid.1709260](https://doi.org/10.57165/artgrid.1709260) ·
 > [PDF](docs/cankaya-2025-istanbul-rdf-lulc.pdf)
 
 ---
