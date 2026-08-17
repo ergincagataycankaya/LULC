@@ -1,0 +1,12 @@
+name: LULC
+title: LULC
+username: ergin
+account: ergin
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14889555
+bundleId: 10707572
+url: https://ergin.shinyapps.io/LULC/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

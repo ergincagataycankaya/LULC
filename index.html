@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Istanbul RDF — Land Cover Atlas 2019–2023</title>
+<meta name="description" content="Interactive atlas of land use and land cover change across the Istanbul Regional Directorate of Forestry, 2019–2023. Sentinel-2 imagery classified with a U-Net deep learning model.">
+<meta name="author" content="Ergin Çağatay Çankaya">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080b0f">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Istanbul RDF — Land Cover Atlas 2019–2023">
+<meta property="og:description" content="Five years of Sentinel-2 land cover for the Istanbul Regional Directorate of Forestry, classified with U-Net semantic segmentation.">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23358221'/%3E%3Cpath d='M16 6 L24 20 H8 Z' fill='%233fd07e'/%3E%3Crect x='15' y='19' width='2' height='7' fill='%233fd07e'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://api-main-432878571563.europe-west4.run.app" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com">
+<link rel="dns-prefetch" href="https://a.basemaps.cartocdn.com">
+
+<link rel="stylesheet" href="assets/vendor/maplibre-gl.css">
+<link rel="stylesheet" href="assets/css/app.css">
+
+<script defer src="assets/vendor/maplibre-gl.js"></script>
+<script type="module" src="assets/js/app.js"></script>
+</head>
+
+<body>
+<div class="app">
+
+  <!-- ================================ Top bar ================================ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="#04180d"><path d="M12 3 L20 17 H4 Z"/><rect x="11" y="16" width="2" height="5"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">Istanbul RDF &middot; Land Cover Atlas</div>
+        <div class="brand-sub">2019–2023 &middot; Sentinel-2 &middot; U-Net</div>
+      </div>
+    </div>
+
+    <div class="topbar-spacer"></div>
+
+    <div class="topbar-tools">
+      <div class="seg" id="seg-basemap" data-role="basemap" role="group" aria-label="Basemap">
+        <button type="button" data-value="satellite" aria-pressed="true"><span>Satellite</span></button>
+        <button type="button" data-value="dark" aria-pressed="false"><span>Dark</span></button>
+        <button type="button" data-value="light" aria-pressed="false"><span>Light</span></button>
+      </div>
+
+      <div class="opacity-ctl" title="Land cover layer opacity">
+        <label class="sr" for="opacity">Layer opacity</label>
+        <input type="range" id="opacity" min="10" max="100" step="1" value="82">
+        <span class="num" id="opacity-val">82%</span>
+      </div>
+
+      <button type="button" class="pill-btn" id="btn-labels" aria-pressed="true" title="Place labels (L)"><span>Labels</span></button>
+      <button type="button" class="pill-btn" id="btn-compare" aria-pressed="false" title="Swipe compare two years (C)"><span>Compare</span></button>
+      <button type="button" class="icon-btn" id="btn-about" title="About this atlas (?)" aria-label="About"></button>
+    </div>
+  </header>
+
+  <!-- ================================= Stage ================================= -->
+  <main class="stage">
+    <div class="map-host">
+      <div id="map" role="application" aria-label="Land cover map"></div>
+      <div id="map-b" aria-hidden="true"></div>
+    </div>
+
+    <div class="compare-handle" role="separator" aria-label="Compare slider">
+      <div class="compare-grip"></div>
+    </div>
+    <div class="compare-tag a num">2019</div>
+    <div class="compare-tag b num">2023</div>
+
+    <!-- ------------------------------ Panel ------------------------------ -->
+    <aside class="panel" aria-label="Land cover statistics">
+      <div class="panel-head">
+        <div class="panel-year">
+          <h1 id="panel-year" class="num">2023</h1>
+          <span class="tag" id="panel-tag">On map</span>
+        </div>
+        <div class="panel-meta num" id="panel-meta"></div>
+
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" data-tab="composition" aria-selected="true">Composition</button>
+          <button type="button" role="tab" data-tab="change" aria-selected="false">Change</button>
+          <button type="button" role="tab" data-tab="accuracy" aria-selected="false">Accuracy</button>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        <!-- Composition -->
+        <section class="tabpane active" data-tab="composition" role="tabpanel">
+          <div class="sec">
+            <h2 class="sec-title">
+              <span>Landscape share</span>
+              <span class="num" id="comp-total"></span>
+            </h2>
+            <div class="ribbon" id="ribbon"></div>
+            <div class="class-list" id="class-list"></div>
+            <p class="hint">
+              Click any class to remove it from the map; alt-click to isolate it.
+              Filtering happens server-side in the tile colour map, so nothing extra is downloaded.
+              Currently <span id="comp-shown">all 9 classes</span>.
+            </p>
+          </div>
+        </section>
+
+        <!-- Change -->
+        <section class="tabpane" data-tab="change" role="tabpanel">
+          <div class="sec">
+            <h2 class="sec-title">
+              <span>Net change</span>
+              <span class="num" id="change-range"></span>
+            </h2>
+            <div class="stat-grid" id="headline-cards"></div>
+          </div>
+
+          <div class="sec">
+            <h2 class="sec-title"><span>By class, hectares</span></h2>
+            <div class="change-list" id="change-list"></div>
+          </div>
+
+          <div class="sec">
+            <h2 class="sec-title"><span>Trajectory · index 2019 = 100</span></h2>
+            <div id="trend"></div>
+            <p class="hint">
+              Classes differ by an order of magnitude in absolute area, so each series is
+              indexed to its own 2019 value. Click a year to jump the map to it.
+            </p>
+          </div>
+        </section>
+
+        <!-- Accuracy -->
+        <section class="tabpane" data-tab="accuracy" role="tabpanel">
+          <div class="overall">
+            <div class="overall-num num" id="acc-overall">90.36%</div>
+            <div class="overall-txt" id="acc-overall-note"></div>
+          </div>
+
+          <div class="sec">
+            <h2 class="sec-title"><span>Per-class metrics</span></h2>
+            <div class="acc-head">
+              <span>Class</span><span>Prec.</span><span>Rec.</span><span>F1</span>
+            </div>
+            <div id="acc-rows"></div>
+            <p class="hint">
+              Rangeland and wetland are consistently the weakest classes. Rangeland behaves as a
+              transition zone between forest and cropland and shares much of their spectral
+              signature, so recall stays low even when precision is high.
+            </p>
+          </div>
+        </section>
+
+        <footer class="panel-foot">
+          <p>
+            Figures are the published totals from
+            <a id="foot-cite" href="#" target="_blank" rel="noopener">Çankaya, Gencal &amp; Sönmez (2025)</a>,
+            <em>ArtGRID</em> 7(1): 26–44.
+            <button type="button" class="linklike" id="foot-about">Methods &amp; credits</button>
+          </p>
+          <p class="foot-credits">
+            Imagery © Copernicus/ESA · Basemaps © Esri, © CARTO, © OpenStreetMap contributors
+          </p>
+        </footer>
+
+      </div>
+    </aside>
+
+    <!-- --------------------------- Floating chrome --------------------------- -->
+    <div class="float panel-toggle">
+      <button type="button" class="icon-btn" id="btn-panel" aria-pressed="true" title="Hide panel (P)"></button>
+    </div>
+
+    <div class="float mapnav">
+      <button type="button" class="icon-btn" id="btn-zoom-in" title="Zoom in" aria-label="Zoom in"></button>
+      <button type="button" class="icon-btn" id="btn-zoom-out" title="Zoom out" aria-label="Zoom out"></button>
+      <button type="button" class="icon-btn" id="btn-home" title="Zoom to study area" aria-label="Zoom to study area"></button>
+    </div>
+
+    <div class="float legend-card">
+      <div class="legend-title">Land cover class</div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <!-- Bottom dock keeps the timeline optically centred in the map area
+         while the readout claims the right edge, so the two can never collide. -->
+    <div class="float dock">
+      <div class="dock-side" aria-hidden="true"></div>
+
+      <div class="timeline">
+        <button type="button" class="tl-play" id="btn-play" aria-pressed="false" title="Play through years (Space)"></button>
+        <span class="tl-sep"></span>
+        <label class="tl-base-wrap" id="tl-base-wrap" hidden>
+          vs
+          <select id="tl-base" class="num" aria-label="Comparison year"></select>
+        </label>
+        <div class="tl-years" id="tl-years"></div>
+      </div>
+
+      <div class="dock-side">
+        <div class="readout">
+          <span class="busy-dot" title="Loading tiles"></span>
+          <b class="num" id="ro-zoom">z8.0</b>
+          <span class="sep"></span>
+          <span class="num" id="ro-coord"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="float attrib">
+      Land cover © Çankaya et al. 2025 · Imagery © Copernicus/ESA ·
+      Basemap © <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>,
+      © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>,
+      © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors
+    </div>
+
+    <!-- Boot screen -->
+    <div class="boot">
+      <div class="boot-inner">
+        <div class="boot-title">Istanbul RDF — Land Cover Atlas</div>
+        <div class="boot-sub">Loading classified Sentinel-2 rasters…</div>
+        <div class="boot-bar"><i></i></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ================================= About ================================= -->
+<dialog id="about" class="sheet-dialog" aria-labelledby="about-title">
+  <div class="dlg">
+    <div class="dlg-head">
+      <div style="flex:1">
+        <h2 id="about-title">About this atlas</h2>
+        <p>Land use and land cover monitoring for the Istanbul Regional Directorate of Forestry</p>
+      </div>
+      <button type="button" class="icon-btn" id="about-close" aria-label="Close"></button>
+    </div>
+
+    <div class="dlg-body prose">
+      <h3>What you are looking at</h3>
+      <p>
+        Five annual land cover maps covering roughly <strong>2.2 million hectares</strong> across the
+        Istanbul Regional Directorate of Forestry. Each map was produced by classifying cloud-filtered
+        Sentinel-2 summer composites (June–September, &lt;5% cloud) with a <strong>U-Net</strong>
+        semantic segmentation model trained on 15,056 annotated 256×256 tiles across nine land cover
+        classes. Overall F1-scores range from 89.5% to 92.9%; forest specifically averages about 92%.
+      </p>
+      <p>
+        Between 2019 and 2023 the model records a loss of <strong>15,251 ha of forest</strong> and
+        <strong>13,226 ha of rangeland</strong>, against gains of <strong>15,953 ha of agriculture</strong>
+        and <strong>13,878 ha of built area</strong> — the signature of continued urban expansion and
+        agricultural intensification around the metropolitan region.
+      </p>
+
+      <h3>Study area</h3>
+      <dl class="kv">
+        <dt>Extent</dt><dd>26°19′48″–29°57′31″E, 40°48′38″–42°06′21″N</dd>
+        <dt>Provinces</dt><dd id="area-provinces"></dd>
+        <dt>Directorates</dt><dd id="area-directorates"></dd>
+        <dt>Imagery</dt><dd>Sentinel-2 MSI L2A, 10 m, 2019–2023</dd>
+        <dt>Validation</dt><dd>National Forest Inventory plots (825 permanent locations), forest management and cadastral maps, expert review of high-resolution imagery</dd>
+      </dl>
+
+      <h3>Citation</h3>
+      <div class="cite">
+        <span id="cite-text"></span><br>
+        <a id="cite-link" href="#" target="_blank" rel="noopener">Journal record</a> &middot;
+        <a id="cite-pdf" href="#" target="_blank" rel="noopener">Full text (PDF)</a>
+      </div>
+
+      <h3>Reading the numbers</h3>
+      <p>
+        Class areas are the published totals from Table 1 of the paper, not values recomputed from the
+        tiles, so what the panel reports and what the article reports are the same numbers. The
+        <em>Clouds</em> and <em>Snow/Ice</em> classes are residual artefacts of the compositing step and
+        cover a negligible share of the region; they are retained because the classifier emits them and
+        hiding them would misstate the totals.
+      </p>
+      <p>
+        Rangeland deserves a caveat. It sits between forest and cropland both spatially and spectrally,
+        and the abrupt rather than gradual transitions in this landscape make it the hardest class to
+        delineate — its recall never exceeds 0.59. Treat year-to-year rangeland swings as the least
+        reliable signal in the dataset.
+      </p>
+
+      <h3>Keyboard</h3>
+      <div class="keys">
+        <div><kbd>←</kbd><kbd>→</kbd> Step through years</div>
+        <div><kbd>1</kbd>–<kbd>5</kbd> Jump to a year</div>
+        <div><kbd>Space</kbd> Play / pause</div>
+        <div><kbd>C</kbd> Swipe compare</div>
+        <div><kbd>P</kbd> Toggle panel</div>
+        <div><kbd>B</kbd> Cycle basemap</div>
+        <div><kbd>L</kbd> Toggle labels</div>
+        <div><kbd>?</kbd> This dialog</div>
+      </div>
+
+      <h3>Credits</h3>
+      <p>
+        Analysis and application by Ergin Çağatay Çankaya, with Burhan Gencal and Turan Sönmez
+        (Bursa Technical University, Faculty of Forestry). Imagery © Copernicus / ESA.
+        Basemaps © Esri and contributors, © CARTO, © OpenStreetMap contributors.
+        Released under the MIT licence.
+      </p>
+    </div>
+  </div>
+</dialog>
+
+<noscript>
+  <div style="position:fixed;inset:0;display:grid;place-items:center;background:#080b0f;color:#e6edf3;z-index:99;font-family:system-ui,sans-serif;text-align:center;padding:24px">
+    <div>
+      <h1 style="font-size:16px;font-weight:600">JavaScript required</h1>
+      <p style="color:#90a0af;font-size:13px;max-width:34em">
+        This atlas renders classified Sentinel-2 rasters in the browser and needs JavaScript enabled.
+        The underlying figures are published in ArtGRID 7(1): 26–44.
+      </p>
+    </div>
+  </div>
+</noscript>
+</body>
+</html>

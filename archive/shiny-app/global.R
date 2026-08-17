@@ -3,7 +3,7 @@ library(leaflet)
 library(leaflet.minicharts)
 library(leaflet.extras)
 library(leaflet.extras2)
-library(shiny.slider) # for before/after slider functionality
+# library(shiny.slider) # for before/after slider functionality
 library(plotly)
 
 

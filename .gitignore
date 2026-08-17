@@ -1,4 +1,11 @@
+# R (legacy Shiny app under archive/)
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
+
+# Tooling
+.vercel
+.DS_Store
+Thumbs.db
+node_modules/
