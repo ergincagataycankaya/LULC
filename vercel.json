@@ -16,6 +16,12 @@
       ]
     },
     {
+      "source": "/assets/(.*).(jpg|png|svg|webp)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=604800" }
+      ]
+    },
+    {
       "source": "/docs/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=86400" }

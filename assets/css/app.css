@@ -77,8 +77,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 #map-b { display: none; }
 .compare #map-b { display: block; }
 
-.maplibregl-ctrl-attrib,
-.maplibregl-ctrl-logo { display: none !important; }
+/* MapLibre builds this element at runtime; the focus ring would sit on the
+   whole map, which is not what the keyboard user is acting on. */
 .maplibregl-canvas:focus { outline: none; }
 
 /* ==========================================================================

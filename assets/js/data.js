@@ -84,7 +84,8 @@ export const ACCURACY = {
 
 const TILER = 'https://api-main-432878571563.europe-west4.run.app/tiler/raster/{z}/{x}/{y}';
 
-export const MAP_IDS = {
+/* Consumed only by tileURL below; nothing outside this module needs the ids. */
+const MAP_IDS = {
   2019: 'e89d93ac-5816-4771-be04-1434e3e02f00',
   2020: '2c1bcbac-4733-4c7b-ad79-40227fdf0dd2',
   2021: '44aa06c9-77e6-4605-a2d4-61c0abd46932',
