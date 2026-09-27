@@ -1,0 +1,16 @@
+name: Check basemaps
+on:
+  push:
+    paths: ['assets/js/data.js', 'scripts/check-basemaps.mjs']
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node scripts/check-basemaps.mjs
