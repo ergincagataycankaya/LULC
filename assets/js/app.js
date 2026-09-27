@@ -143,7 +143,7 @@ function baseStyle() {
   return {
     version: 8,
     sources: {
-      base:   { type: 'raster', tiles: bm.tiles,  tileSize: 256, maxzoom: 18, attribution: bm.attribution },
+      base:   { type: 'raster', tiles: bm.tiles,  tileSize: 256, maxzoom: bm.maxzoom ?? 18, attribution: bm.attribution },
       labels: { type: 'raster', tiles: bm.labels, tileSize: 256, maxzoom: 16 }
     },
     layers: [

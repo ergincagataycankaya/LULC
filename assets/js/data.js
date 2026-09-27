@@ -121,25 +121,23 @@ export const BASEMAPS = {
     labels: LABELS_DARK,
     attribution: 'Esri, Maxar, Earthstar Geographics'
   },
+  /* Every basemap comes from Esri's keyless tile service. CARTO started
+     serving an "API KEY REQUIRED" watermark with HTTP 200, which no
+     runtime error handler can catch; scripts/check-basemaps.mjs guards
+     against a repeat. Add a provider only if it works without a key. */
   dark: {
     label: 'Dark',
-    tiles: [
-      'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-      'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
-      'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
-    ],
+    tiles: [`${ESRI}/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}`],
+    maxzoom: 16,
     labels: LABELS_DARK,
-    attribution: 'CARTO, OpenStreetMap contributors'
+    attribution: 'Esri, HERE, Garmin, OpenStreetMap contributors'
   },
   light: {
     label: 'Light',
-    tiles: [
-      'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-      'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
-      'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png'
-    ],
+    tiles: [`${ESRI}/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`],
+    maxzoom: 16,
     labels: LABELS_LIGHT,
-    attribution: 'CARTO, OpenStreetMap contributors'
+    attribution: 'Esri, HERE, Garmin, OpenStreetMap contributors'
   }
 };
 
