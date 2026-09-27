@@ -5,6 +5,10 @@ Directorate of Forestry (RDF)**, 2019–2023. Five annual maps covering ~2.2 mil
 hectares, produced by classifying Sentinel-2 summer composites with a **U-Net**
 semantic segmentation model.
 
+**Live:** <https://lulc-one.vercel.app>
+
+![Stepping through 2019–2023 in the atlas](assets/demo.gif)
+
 The figures shown in the application are the published totals from:
 
 > Çankaya, E. Ç., Gencal, B., & Sönmez, T. (2025). *Advancing forest land monitoring in
@@ -44,6 +48,7 @@ assets/js/data.js            Published areas, accuracy table, palette, tile conf
 assets/js/charts.js          Hand-rolled SVG sparkline and trajectory chart
 assets/js/app.js             Map, state, panel rendering, URL sync
 assets/vendor/maplibre-gl.*  MapLibre GL JS 5.24 (vendored, not a CDN)
+scripts/check-basemaps.mjs   Fails if a basemap needs an API key or stops serving tiles
 docs/                        The published article
 archive/shiny-app/           The previous R Shiny implementation, kept for reference
 ```
@@ -83,6 +88,21 @@ The repository is a static site — Vercel needs no framework preset, no build
 command, and no output directory. `vercel.json` only sets cache and security
 headers.
 
+## Basemaps
+
+All three basemaps (Satellite, Dark, Light) come from Esri's tile service, which
+needs no API key. CARTO's basemaps were dropped after they started returning an
+"API KEY REQUIRED" watermark with HTTP 200, which the browser cannot detect as an
+error. Before adding a provider, run:
+
+```bash
+node scripts/check-basemaps.mjs
+```
+
+It rejects providers that require a key and checks that every tile URL returns an
+image. `.github/workflows/check-basemaps.yml` runs it weekly and on every change
+to the basemap config.
+
 ---
 
 ## Data notes
@@ -106,5 +126,5 @@ agriculture +15,953 ha, built area +13,878 ha.
 Analysis and application by **Ergin Çağatay Çankaya**, with Burhan Gencal and
 Turan Sönmez (Bursa Technical University, Faculty of Forestry).
 
-Imagery © Copernicus / ESA. Basemaps © Esri, © CARTO,
+Imagery © Copernicus / ESA. Basemaps © Esri, HERE, Garmin,
 © OpenStreetMap contributors. Released under the [MIT licence](LICENSE).
