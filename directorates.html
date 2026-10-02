@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Istanbul RDF — Directorate Land Cover Change</title>
+<meta name="description" content="Land cover change for each of the ten forest management directorates of the Istanbul Regional Directorate of Forestry, 2019–2023.">
+<meta name="author" content="Ergin Çağatay Çankaya">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080b0f">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23358221'/%3E%3Cpath d='M16 6 L24 20 H8 Z' fill='%233fd07e'/%3E%3Crect x='15' y='19' width='2' height='7' fill='%233fd07e'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://api-main-432878571563.europe-west4.run.app" crossorigin>
+<link rel="preconnect" href="https://server.arcgisonline.com">
+
+<link rel="stylesheet" href="assets/vendor/maplibre-gl.css">
+<link rel="stylesheet" href="assets/css/app.css">
+
+<script defer src="assets/vendor/maplibre-gl.js"></script>
+<script type="module" src="assets/js/directorates.js"></script>
+</head>
+
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="#04180d"><path d="M12 3 L20 17 H4 Z"/><rect x="11" y="16" width="2" height="5"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">Istanbul RDF &middot; Directorates</div>
+        <div class="brand-sub">10 management directorates &middot; 2019–2023</div>
+      </div>
+    </div>
+
+    <div class="topbar-spacer"></div>
+
+    <div class="topbar-tools">
+      <a class="pill-btn" href="./" title="Back to the regional atlas"><span>Regional atlas</span></a>
+
+      <div class="seg" id="seg-basemap" role="group" aria-label="Basemap">
+        <button type="button" data-value="satellite" aria-pressed="true"><span>Satellite</span></button>
+        <button type="button" data-value="dark" aria-pressed="false"><span>Dark</span></button>
+        <button type="button" data-value="light" aria-pressed="false"><span>Light</span></button>
+      </div>
+
+      <div class="opacity-ctl" title="Land cover layer opacity">
+        <label class="sr" for="opacity">Layer opacity</label>
+        <input type="range" id="opacity" min="10" max="100" step="1" value="82">
+        <span class="num" id="opacity-val">82%</span>
+      </div>
+
+      <button type="button" class="pill-btn" id="btn-labels" aria-pressed="true" title="Place labels (L)"><span>Labels</span></button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="map-host">
+      <div id="map" role="application" aria-label="Directorate land cover map"></div>
+    </div>
+
+    <aside class="panel" aria-label="Directorate statistics">
+      <div class="panel-head">
+        <div class="panel-year">
+          <h1 id="panel-title">All directorates</h1>
+          <span class="tag num" id="panel-year">2023</span>
+        </div>
+        <div class="panel-meta num" id="panel-meta"></div>
+
+        <label class="dir-pick">
+          <span class="sr">Directorate</span>
+          <select id="dir-select" aria-label="Directorate"></select>
+        </label>
+
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" data-tab="composition" aria-selected="true">Composition</button>
+          <button type="button" role="tab" data-tab="change" aria-selected="false">Change</button>
+          <button type="button" role="tab" data-tab="ranking" aria-selected="false">Ranking</button>
+        </div>
+      </div>
+
+      <div class="panel-body">
+
+        <section class="tabpane active" data-tab="composition" role="tabpanel">
+          <div class="sec">
+            <h2 class="sec-title">
+              <span>Landscape share</span>
+              <span class="num" id="comp-total"></span>
+            </h2>
+            <div class="ribbon" id="ribbon"></div>
+            <div class="class-list" id="class-list"></div>
+            <p class="hint">
+              Click a class to remove it from the map; alt-click to isolate it.
+              Currently <span id="comp-shown">all 9 classes</span>.
+            </p>
+          </div>
+        </section>
+
+        <section class="tabpane" data-tab="change" role="tabpanel">
+          <div class="sec">
+            <h2 class="sec-title">
+              <span>Net change</span>
+              <label class="vs-pick num">
+                <select id="base-select" aria-label="Baseline year"></select>
+                <span id="change-range"></span>
+              </label>
+            </h2>
+            <div class="stat-grid" id="headline-cards"></div>
+          </div>
+
+          <div class="sec">
+            <h2 class="sec-title"><span>By class, hectares</span></h2>
+            <div class="change-list" id="change-list"></div>
+          </div>
+
+          <div class="sec">
+            <h2 class="sec-title"><span>Trajectory · index 2019 = 100</span></h2>
+            <div id="trend"></div>
+            <p class="hint">Each series is indexed to its own 2019 value. Click a year to jump the map to it.</p>
+          </div>
+        </section>
+
+        <section class="tabpane" data-tab="ranking" role="tabpanel">
+          <div class="sec">
+            <h2 class="sec-title">
+              <span>Directorates by</span>
+              <select id="rank-class" class="num" aria-label="Class"></select>
+            </h2>
+            <div class="seg seg-wide" id="seg-rank" role="group" aria-label="Ranking metric">
+              <button type="button" data-value="change" aria-pressed="true"><span>Change, ha</span></button>
+              <button type="button" data-value="pct" aria-pressed="false"><span>Change, %</span></button>
+              <button type="button" data-value="area" aria-pressed="false"><span>Area, ha</span></button>
+            </div>
+            <div class="rank-list" id="rank-list"></div>
+            <p class="hint" id="rank-note">Click a directorate to select it.</p>
+          </div>
+        </section>
+
+        <footer class="panel-foot">
+          <p>
+            Areas are counted from the classified 10&nbsp;m rasters inside each directorate boundary
+            (<span id="foot-coverage"></span> of the regional raster; the remainder lies outside the ten boundaries).
+            Method and accuracy:
+            <a id="foot-cite" href="#" target="_blank" rel="noopener">Çankaya, Gencal &amp; Sönmez (2025)</a>,
+            <em>ArtGRID</em> 7(1): 26–44.
+          </p>
+          <p class="foot-credits">
+            Imagery © Copernicus/ESA · Basemaps © Esri, © OpenStreetMap contributors
+          </p>
+        </footer>
+      </div>
+    </aside>
+
+    <div class="float panel-toggle">
+      <button type="button" class="icon-btn" id="btn-panel" aria-pressed="true" title="Hide panel (P)"></button>
+    </div>
+
+    <div class="float mapnav">
+      <button type="button" class="icon-btn" id="btn-zoom-in" title="Zoom in" aria-label="Zoom in"></button>
+      <button type="button" class="icon-btn" id="btn-zoom-out" title="Zoom out" aria-label="Zoom out"></button>
+      <button type="button" class="icon-btn" id="btn-home" title="Zoom to all directorates" aria-label="Zoom to all directorates"></button>
+    </div>
+
+    <div class="float legend-card" id="legend-card" title="Drag to move · double-click to reset">
+      <div class="legend-title">Land cover class</div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="float dock">
+      <div class="dock-side" aria-hidden="true"></div>
+      <div class="timeline">
+        <button type="button" class="tl-play" id="btn-play" aria-pressed="false" title="Play through years (Space)"></button>
+        <span class="tl-sep"></span>
+        <div class="tl-years" id="tl-years"></div>
+      </div>
+      <div class="dock-side">
+        <div class="readout">
+          <span class="busy-dot" title="Loading tiles"></span>
+          <b class="num" id="ro-zoom">z8.0</b>
+          <span class="sep"></span>
+          <span class="num" id="ro-coord"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-tip" id="map-tip" hidden></div>
+
+    <div class="float attrib">
+      Land cover © Çankaya et al. 2025 · Imagery © Copernicus/ESA ·
+      Basemap © <a href="https://www.esri.com/" target="_blank" rel="noopener">Esri</a>,
+      © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors
+    </div>
+
+    <div class="boot">
+      <div class="boot-inner">
+        <div class="boot-title">Istanbul RDF — Directorates</div>
+        <div class="boot-sub">Loading boundaries and rasters…</div>
+        <div class="boot-bar"><i></i></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<noscript>
+  <div style="position:fixed;inset:0;display:grid;place-items:center;background:#080b0f;color:#e6edf3;z-index:99;font-family:system-ui,sans-serif;text-align:center;padding:24px">
+    <div>
+      <h1 style="font-size:16px;font-weight:600">JavaScript required</h1>
+      <p style="color:#90a0af;font-size:13px;max-width:34em">This page renders classified Sentinel-2 rasters in the browser and needs JavaScript enabled.</p>
+    </div>
+  </div>
+</noscript>
+</body>
+</html>

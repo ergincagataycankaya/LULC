@@ -50,6 +50,8 @@
     <div class="topbar-spacer"></div>
 
     <div class="topbar-tools">
+      <a class="pill-btn" href="directorates" title="Land cover change by management directorate"><span>Directorates</span></a>
+
       <div class="seg" id="seg-basemap" data-role="basemap" role="group" aria-label="Basemap">
         <button type="button" data-value="satellite" aria-pressed="true"><span>Satellite</span></button>
         <button type="button" data-value="dark" aria-pressed="false"><span>Dark</span></button>
@@ -188,7 +190,7 @@
       <button type="button" class="icon-btn" id="btn-home" title="Zoom to study area" aria-label="Zoom to study area"></button>
     </div>
 
-    <div class="float legend-card">
+    <div class="float legend-card" id="legend-card" title="Drag to move · double-click to reset">
       <div class="legend-title">Land cover class</div>
       <div class="legend" id="legend"></div>
     </div>

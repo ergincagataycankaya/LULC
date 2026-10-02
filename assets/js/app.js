@@ -9,6 +9,7 @@ import {
   tileURL, totalHa, delta, series
 } from './data.js';
 import { trendChart, sparkline } from './charts.js';
+import { makeDraggable } from './draggable.js';
 
 /* ------------------------------------------------------------------ *
  * Formatting                                                          *
@@ -889,6 +890,12 @@ function boot() {
   $('#about-close').replaceChildren(icon('close'));
   $('.compare-grip').replaceChildren(icon('grip'));
   $('.opacity-ctl').prepend(icon('drop'));
+
+  makeDraggable($('#legend-card'), {
+    container: $('.stage'),
+    storageKey: 'lulc.legend.pos',
+    enabled: () => window.innerWidth > 860
+  });
 
   let resizeTimer;
   window.addEventListener('resize', () => {
