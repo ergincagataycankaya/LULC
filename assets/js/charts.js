@@ -77,7 +77,7 @@ export function sparkline(values, { color, w = 76, h = 22 } = {}) {
  * how much, relative to where they started.                           *
  * ------------------------------------------------------------------ */
 
-export function trendChart(host, { keys, activeYear, onHoverYear }) {
+export function trendChart(host, { keys, activeYear, onHoverYear, area = AREA_HA }) {
   host.textContent = '';
 
   const w = Math.max(240, host.clientWidth || 320);
@@ -91,7 +91,7 @@ export function trendChart(host, { keys, activeYear, onHoverYear }) {
     key,
     color: CLASS_BY_KEY[key].hex,
     label: CLASS_BY_KEY[key].label,
-    values: YEARS.map(y => (AREA_HA[y][key] / AREA_HA[base][key]) * 100)
+    values: YEARS.map(y => (area[y][key] / area[base][key]) * 100)
   }));
 
   const all = indexed.flatMap(s => s.values);

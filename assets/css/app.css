@@ -784,6 +784,51 @@ kbd {
   .seg button { padding: 5px 7px; font-size: 11px; }
 }
 
+/* Directorates page ---------------------------------------------------- */
+
+a.pill-btn { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+
+.dir-pick { display: block; margin: 10px 0 2px; }
+.dir-pick select, .vs-pick select, #rank-class {
+  background: var(--raised); color: var(--text); border: 1px solid var(--line);
+  border-radius: 7px; font: inherit; font-size: 12px; padding: 5px 8px; cursor: pointer;
+}
+.dir-pick select { width: 100%; font-size: 12.5px; padding: 7px 10px; }
+.dir-pick select:hover, .vs-pick select:hover, #rank-class:hover { background: var(--raised-hover); }
+.dir-pick option, .vs-pick option, #rank-class option { background: var(--surface-solid); color: var(--text); }
+.vs-pick { display: inline-flex; align-items: center; gap: 8px; font-weight: 500; }
+
+.seg-wide { display: flex; margin: 2px 0 10px; }
+.seg-wide button { flex: 1; }
+
+.rank-list { display: flex; flex-direction: column; gap: 1px; }
+.rank-row {
+  display: grid; grid-template-columns: 82px 1fr 64px; align-items: center; gap: 10px;
+  width: 100%; text-align: left; padding: 6px 7px; border-radius: 6px;
+  font-size: 12px; color: var(--text-dim);
+  transition: background 0.13s var(--ease), color 0.13s var(--ease);
+}
+.rank-row:hover { background: var(--raised-hover); color: var(--text); }
+.rank-row[data-selected="true"] { background: var(--raised); color: var(--text); box-shadow: 0 0 0 1px var(--accent) inset; }
+.rank-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rank-row .change-val { text-align: right; }
+
+.map-tip {
+  position: absolute; z-index: 30; pointer-events: none;
+  padding: 4px 9px; border-radius: 6px; font-size: 11.5px; white-space: nowrap;
+  background: var(--surface-solid); color: var(--text);
+  border: 1px solid var(--line-strong); box-shadow: var(--shadow);
+}
+.map-tip[hidden] { display: none; }
+
+/* Draggable legend ----------------------------------------------------- */
+
+@media (min-width: 861px) {
+  .legend-card { cursor: grab; touch-action: none; }
+  .legend-card.dragging { cursor: grabbing; user-select: none; box-shadow: var(--shadow), 0 0 0 1px var(--accent); }
+  .legend-card .legend-chip { cursor: pointer; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
